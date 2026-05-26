@@ -17,4 +17,17 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // Operational scripts run by Node directly (C7 bootstrap, rotation check).
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        fetch: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+      },
+    },
+  },
 );
