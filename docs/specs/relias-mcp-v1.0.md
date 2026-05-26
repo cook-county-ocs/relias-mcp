@@ -19,6 +19,7 @@
 | 1.0 | 2026-05-26 | Initial release |
 | 1.1 | 2026-05-26 | Added §7 Chores (C1–C13) with operational chore tracking; updated §8 Phase Ladder with chore-prereq column; added meta-note on feature/chore division as PM primitive; folded `RELIAS_GH_DISPATCH_TOKEN` into the secrets list (was previously only in §6); pointer to companion `relias-mcp-v1.0-chores.md` doc |
 | 1.2 | 2026-05-26 | §11: recorded two v1.1 deferrals from Marty — a browser-operable GUI (required by OCS-Pivot / LD-07; CLI alone doesn't serve the OCS seats) and an OpenAPI document describing relias-mcp's own surface for downstream citizens. No v1.0 scope change. |
+| 1.3 | 2026-05-26 | Added LD-RM-16 re-locking the refresh-token bootstrap method (one-time `offline_access` auth-code+PKCE) after C7 discovery showed the SPA session has no refresh token; annotated LD-RM-04's superseded clause. C7 rewritten in the chores doc; `scripts/bootstrap-refresh-token.mjs` added. F1 code unchanged. |
 
 ---
 
@@ -71,7 +72,7 @@ These are immutable for v1.0. Any v1.1+ change requires explicit re-locking with
 | LD-RM-01 | Single Node/TypeScript package with three entry points: library, CLI, MCP server. No monorepo. | Marty, 2026-05-26 |
 | LD-RM-02 | Source of truth is JSON snapshots in a separate git repo (`cook-county-ocs/ocs-relias-snapshots`). No database in v1.0. | Marty, Thread 3 (April 2026), confirmed 2026-05-26 |
 | LD-RM-03 | All persistence goes through an abstract `SnapshotStore` interface. v1.0 ships `GitJsonSnapshotStore`. Future Neon swap is a new implementation, not a rewrite. | Marty, 2026-05-26 |
-| LD-RM-04 | Auth is OIDC against `login.reliaslearning.com` with refresh-token grant. Initial refresh token bootstrapped manually from a logged-in browser session. | Marty, 2026-05-26 |
+| LD-RM-04 | Auth is OIDC against `login.reliaslearning.com` with refresh-token grant. ~~Initial refresh token bootstrapped manually from a logged-in browser session.~~ **Bootstrap clause superseded by LD-RM-16** — the SPA session carries no refresh token. The refresh-token grant itself (F1) stands. | Marty, 2026-05-26 |
 | LD-RM-05 | v1.0 scope is catalog reconciliation only. Course Updates page (v1.1), transcripts (v1.5), schedule + assignment (v2.0) are explicit non-goals. | Marty, 2026-05-26 |
 | LD-RM-06 | Cron cadence: weekly Monday 06:00 Central (12:00 UTC) via GitHub Actions schedule, plus `workflow_dispatch` for on-demand. | Marty, 2026-05-26 |
 | LD-RM-07 | Three MCP tools in v1.0: `relias-get-latest-diff` (snapshot↔snapshot), `relias-force-refresh` (trigger cron), `relias-reconcile-catalog` (PDF/file↔Relias). | Marty, 2026-05-26 |
@@ -83,6 +84,7 @@ These are immutable for v1.0. Any v1.1+ change requires explicit re-locking with
 | LD-RM-13 | Stakeholder for `CLAUDE.md` is Tamar Stockley. Project sponsor reference updated from Dr. Lewis. | Marty, 2026-05-26 |
 | LD-RM-14 | Naming: kebab-case for files, directories, branches, MCP tool names, npm package name. SCREAMING_SNAKE_CASE for environment variables (Unix convention). Language-native conventions for code identifiers (camelCase variables, PascalCase classes). | Marty, 2026-05-26 |
 | LD-RM-15 | Feature/chore division: features are F-numbered build work (Claude Code); chores are C-numbered operational work (Marty). Phase ladder shows chore-prereq for each phase. Applies as a meta-pattern to all OCS-Ecosystem citizens going forward. | Marty, 2026-05-26 |
+| LD-RM-16 | **Refresh-token bootstrap method** (supersedes the bootstrap clause of LD-RM-04). Discovery during C7 found the Relias SPA requests scopes *without* `offline_access`, so no refresh token exists in the browser session to harvest. Instead the refresh token is obtained by a **one-time authorization-code + PKCE flow that explicitly requests `offline_access`** against the `rlms-website` client (which permits `authorization_code` but rejects the `password` grant — `unauthorized_client`). Tooling: `scripts/bootstrap-refresh-token.mjs`. F1's `OidcAuth` (refresh-token grant) is unchanged — only how the initial token is acquired. Open risk: if Relias issues one-time (rotating) refresh tokens, P7's cron must persist the rotated token each run (Open Item §12.1). | Marty, 2026-05-26 |
 
 ---
 

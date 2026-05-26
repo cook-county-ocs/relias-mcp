@@ -198,31 +198,50 @@ These chores activate the auth pieces. Do them after P3 lands and before P7 star
 
 ### C7 — Harvest OIDC Refresh Token
 
-This one is browser-driven and time-sensitive (refresh tokens expire). Do it close to when you'll run C8.
+> **Revised 2026-05-26 (LD-RM-16).** The original method — reading
+> `sessionStorage["oidc.user:…"].refresh_token` — does **not work**. The Relias SPA
+> requests scopes without `offline_access`, so the browser session holds an
+> `access_token` but **no `refresh_token`**. We instead run a one-time
+> authorization-code + PKCE flow that explicitly asks for `offline_access`, via
+> `scripts/bootstrap-refresh-token.mjs`. (The `password` grant is rejected for the
+> `rlms-website` client — `unauthorized_client` — so storing credentials is not an option.)
 
-- [ ] Open Chrome / Firefox / Edge on your personal laptop
-- [ ] Navigate to https://aoic.training.reliaslearning.com
-- [ ] Sign in normally (username/password)
-- [ ] Wait for the dashboard to fully load
-- [ ] Open dev tools (F12 or Cmd+Opt+I)
-- [ ] Go to **Console** tab
-- [ ] Paste and run:
+This is browser-assisted and time-sensitive (refresh tokens expire). Do it close to when you'll run C8.
+
+**Step 1 — find the client's redirect URI.**
+
+- [ ] Open your browser, navigate to https://aoic.training.reliaslearning.com, sign in (username/password), let the dashboard load.
+- [ ] Open dev tools (F12 / Cmd+Opt+I) → **Console** → run:
 
   ```javascript
-  JSON.parse(sessionStorage["oidc.user:https://login.reliaslearning.com:rlms-website"]).refresh_token
+  Object.keys(localStorage).filter(k=>k.startsWith('oidc.')).map(k=>{try{return JSON.parse(localStorage[k]).redirect_uri}catch{return null}}).filter(Boolean)
   ```
 
-- [ ] The result is a long string (typically 50-200 chars). Copy it verbatim — no quotes, no whitespace.
+- [ ] Copy the URL it prints (e.g. `https://aoic.training.reliaslearning.com/new/en/signin-oidc`). If it returns `[]`, read `redirect_uri` from the `…/connect/authorize` request in the **Network** tab instead.
 
-**Verification:** You have a string starting with characters like `def502...` or similar. Length looks plausible (50+ characters).
+**Step 2 — run the bootstrap script (terminal).**
 
-**Time:** 5 minutes.
+- [ ] From the repo root:
+
+  ```bash
+  export RELIAS_REDIRECT_URI="<the redirect uri from Step 1>"
+  node scripts/bootstrap-refresh-token.mjs
+  ```
+
+- [ ] The script prints an authorize URL. Open it in the browser tab where you're logged in (DevTools → Network → "Preserve log" on).
+- [ ] You'll be redirected to the callback (the SPA may show an error — ignore it). Copy the `code` query-string value from the callback request in the Network tab.
+- [ ] Paste the `code` at the script's prompt. The script exchanges it and prints the `refresh_token`.
+
+**Verification:** The script prints `✅ refresh_token obtained` followed by a long string. (If it prints `❌ No refresh_token`, `offline_access` was denied for the client — escalate; the fallback is headless re-auth each cron run.)
+
+**Time:** 10 minutes.
 
 **Important caveats:**
 
 - The refresh token is sensitive. Treat it like a password. Don't paste it into chat, email, or anywhere besides C8's GitHub Secret.
-- The token will expire in 30-90 days (Relias's policy is undocumented; the spec assumes 30 days for conservative planning). When the cron starts failing with auth errors, re-do C7 and C8.
-- If you log out of Relias between C7 and C8, the token is invalidated. Do C7 and C8 back-to-back.
+- The token expires (Relias's policy is undocumented; assume 30 days for conservative planning). When the cron starts failing with auth errors, re-run C7 and C8.
+- **Rotation (verify before trusting P7):** if Relias issues one-time refresh tokens, each refresh returns a *new* one and invalidates the old. A single stored token then works for exactly one cron run. Test with `scripts/check-rotation.mjs` (below); if it rotates, P7 must persist the rotated token each run (Open Item §12.1).
+- Don't log out of Relias mid-flow. Do C7 → C8 back-to-back.
 
 ### C8 — Install OIDC Refresh Token as Secret
 
