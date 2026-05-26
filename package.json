@@ -1,0 +1,47 @@
+{
+  "name": "@cook-county-ocs/relias-mcp",
+  "version": "0.0.0",
+  "description": "Cook County OCS — Relias LMS catalog reconciliation and MCP server",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "bin": {
+    "relias-mcp": "./dist/cli.js",
+    "relias-mcp-server": "./dist/mcp.js"
+  },
+  "exports": {
+    ".": "./dist/lib/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "dev:cli": "tsx src/cli.ts",
+    "dev:mcp": "tsx src/mcp.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^3.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "msw": "^2.14.6",
+    "prettier": "^3.3.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^3.0.0"
+  },
+  "dependencies": {
+    "openid-client": "^6.8.4",
+    "pino": "^9.14.0"
+  }
+}
