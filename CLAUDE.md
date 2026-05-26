@@ -54,18 +54,19 @@ This binds the ecosystem authorization protocol to relias-mcp's gates:
   ecosystem rule locked 2026-05-25. The v1.0 spec's §9 drew them singular — that's a known
   defect; the plural names here are correct.
 
-## 🎓 Exercises (Marty writes these himself)
+## 🎓 Exercises (authorship currently suspended)
 
-Two features are marked 🎓 — Claude Code scaffolds types, test stubs, and a README section,
-then **stops**, and Marty fills in the implementation:
+Two features are marked 🎓 — originally reserved for Marty to implement himself:
 
 - **F1 — OIDC client.** The OAuth/OIDC refresh-token flow. Small and self-contained.
 - **F4 — reconciliation engine.** The fuzzy-matching, drift-detection, three-list business
-  logic Marty cares about most. (The four file parsers in F4 are boilerplate — Claude Code
-  does those; the reconciliation algorithm is Marty's.)
+  logic Marty cares about most. (The four file parsers in F4 are boilerplate either way.)
 
-For 🎓 features, ship the PR with stubs only from your side. Don't "help" by implementing the
-body — that defeats the exercise.
+**As of 2026-05-26, 🎓 authorship is suspended** under the ecosystem's read/review mode
+(see `OCS-Ecosystem/CLAUDE.md` → "The 5% Learning Practice"): TypeScript is overwhelming to
+author cold and the build is under deadline, so **Claude Code implements these too and Marty
+reviews them** line-by-line. The 🎓 marker now means "extra review attention," not "Marty
+writes it." This flips back when the mode changes.
 
 ## Architecture in one breath
 
