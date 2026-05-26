@@ -1,3 +1,5 @@
+import type { Logger } from 'pino';
+
 /**
  * Shared types for the relias-mcp library.
  *
@@ -45,4 +47,6 @@ export interface OidcAuthOptions {
   clientId?: string;
   /** Seconds before expiry to proactively refresh. Defaults to 60. */
   refreshSkewSeconds?: number;
+  /** Optional pino logger (injectable for tests). Defaults to a redacting logger. */
+  logger?: Logger;
 }
