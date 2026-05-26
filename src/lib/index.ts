@@ -7,7 +7,16 @@
  * ReconciliationEngine).
  */
 
-export type { PackageIdentity } from './types.js';
+export type {
+  PackageIdentity,
+  OidcTokens,
+  OidcAuthOptions,
+  AccessTokenProvider,
+  ReliasCourse,
+} from './types.js';
+export { OidcAuth } from './oidc-auth.js';
+export { SearchApi, SchemaDriftError, type SearchApiOptions } from './search-api.js';
+export type { ReliasSearchResponse } from './schemas/relias-search.js';
 
 /** The library's package name, as published. */
 export const PACKAGE_NAME = '@cook-county-ocs/relias-mcp';

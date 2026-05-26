@@ -50,3 +50,30 @@ export interface OidcAuthOptions {
   /** Optional pino logger (injectable for tests). Defaults to a redacting logger. */
   logger?: Logger;
 }
+
+// --- F2: search API ---------------------------------------------------------
+
+/** Anything that can hand out a bearer token. `OidcAuth` satisfies this. */
+export interface AccessTokenProvider {
+  getAccessToken(): Promise<string>;
+}
+
+/**
+ * A COPE catalog course, normalized from the nested `courseInfo[0]` of the
+ * search response. `courseID` is the primary key for diffing (F3); `code`,
+ * `title`, and `hours` drive reconciliation (F4).
+ */
+export interface ReliasCourse {
+  courseID: number;
+  title: string;
+  /** Relias course code, e.g. "REL-ALL-SS-BLST". */
+  code: string;
+  /** Numeric credit hours (from `courseHoursNumeric`). */
+  hours: number;
+  /** Display hours string, e.g. "1.00" (from `courseHours`). */
+  hoursLabel: string;
+  courseType: number;
+  description: string | null;
+  releaseDate: string | null;
+  archiveDate: string | null;
+}
