@@ -41,6 +41,23 @@ relias-mcp doctor                # verify config and connectivity
 The MCP server (`relias-mcp-server`) exposes `relias-get-latest-diff`,
 `relias-force-refresh`, and `relias-reconcile-catalog` over stdio.
 
+## Authentication
+
+`relias-mcp` authenticates to Relias with **OIDC against `login.reliaslearning.com`
+using a refresh-token grant** (LD-RM-04). The `OidcAuth` class (`src/lib/oidc-auth.ts`)
+holds a refresh token, exchanges it for a short-lived access token, caches that token in
+memory, and refreshes transparently when it nears expiry.
+
+The initial refresh token is bootstrapped manually from a logged-in browser session
+(chore C7) and installed as the `RELIAS_OIDC_REFRESH_TOKEN` secret (chore C8). It expires
+roughly every 30–90 days; renewing it is a manual re-run of C7/C8 in v1.0.
+
+Tokens are never logged — pino's `redact` scrubs `access_token`, `refresh_token`, and
+`id_token` from structured output.
+
+> **F1 status:** the `OidcAuth` interface, types, and test scaffold are in place; the
+> implementation is a 🎓 exercise (see [CLAUDE.md](CLAUDE.md)).
+
 ## Development
 
 See [BUILDING.md](BUILDING.md) for the dev loop and [RELEASING.md](RELEASING.md) for the
