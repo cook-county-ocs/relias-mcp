@@ -46,7 +46,7 @@ export class OidcAuth {
   /** Discovered OIDC configuration, fetched once and reused. */
   private config?: client.Configuration;
   /** The refresh token to use for the next grant (updated on rotation). */
-  private currentRefreshToken: string;
+  #currentRefreshToken: string;
   /** In-memory access-token cache. */
   private cached?: { accessToken: string; expiresAt: number };
 
@@ -54,8 +54,19 @@ export class OidcAuth {
     this.issuer = options.issuer ?? DEFAULT_ISSUER;
     this.clientId = options.clientId ?? DEFAULT_CLIENT_ID;
     this.refreshSkewSeconds = options.refreshSkewSeconds ?? DEFAULT_REFRESH_SKEW_SECONDS;
-    this.currentRefreshToken = options.refreshToken;
+    this.#currentRefreshToken = options.refreshToken;
     this.log = options.logger ?? pino({ redact: REDACT_PATHS });
+  }
+
+  /**
+   * The refresh token currently held. Relias rotates refresh tokens (one-time
+   * use, confirmed 2026-05-26), so this changes after each {@link getAccessToken}
+   * that triggers a refresh. P7's cron reads this after a snapshot to persist the
+   * rotated token back to the `RELIAS_OIDC_REFRESH_TOKEN` secret (Open Item §12.1);
+   * without that, the next run authenticates with a dead token.
+   */
+  get currentRefreshToken(): string {
+    return this.#currentRefreshToken;
   }
 
   /**
@@ -87,12 +98,12 @@ export class OidcAuth {
   /** Run the refresh-token grant, update the cache, and handle rotation. */
   private async refresh(): Promise<OidcTokens> {
     const config = await this.getConfig();
-    const response = await client.refreshTokenGrant(config, this.currentRefreshToken);
+    const response = await client.refreshTokenGrant(config, this.#currentRefreshToken);
 
     const expiresAt = nowSeconds() + (response.expires_in ?? 0);
     const rotated = Boolean(response.refresh_token);
     if (response.refresh_token) {
-      this.currentRefreshToken = response.refresh_token;
+      this.#currentRefreshToken = response.refresh_token;
     }
     this.cached = { accessToken: response.access_token, expiresAt };
 
@@ -100,7 +111,7 @@ export class OidcAuth {
 
     return {
       accessToken: response.access_token,
-      refreshToken: this.currentRefreshToken,
+      refreshToken: this.#currentRefreshToken,
       idToken: response.id_token,
       expiresAt,
     };

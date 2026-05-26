@@ -357,6 +357,29 @@ Steps (placeholder — do not execute now):
 
 ---
 
+### C14 — Grant the dispatch PAT Secrets: write (rotation persistence)
+
+Added 2026-05-26 after confirming Relias issues **one-time rotating** refresh tokens. P7's
+cron must write the rotated `RELIAS_OIDC_REFRESH_TOKEN` back to the repo secret after each
+run, or the cron breaks after run #1. The auto-injected `GITHUB_TOKEN` **cannot** write
+secrets, so a PAT is required.
+
+To avoid a new secret, **extend the existing C9/C10 fine-grained PAT** (`RELIAS_GH_DISPATCH_TOKEN`)
+rather than minting another:
+
+- [ ] GitHub → Settings → Developer settings → Fine-grained tokens → edit the relias-mcp dispatch PAT
+- [ ] Repository access: `cook-county-ocs/relias-mcp` (already set)
+- [ ] Permissions → add **Secrets: Read and write** (keep the existing Actions permission for `workflow_dispatch`)
+- [ ] Save; no secret value change needed (same token, broader scope)
+
+**Blocks:** P7 rotation persistence. **Do before P7's first real run.**
+
+**Verification:** the PAT lists both *Actions* and *Secrets (write)* permissions on `relias-mcp`.
+
+**Time:** 3 minutes.
+
+---
+
 ## Final Verification
 
 When all batches are complete, run this checklist before triggering the first production cron:
