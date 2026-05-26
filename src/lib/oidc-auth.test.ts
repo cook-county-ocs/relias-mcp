@@ -127,4 +127,11 @@ describe('OidcAuth', () => {
     const auth = makeAuth();
     await expect(auth.getAccessToken()).rejects.toThrow();
   });
+
+  it('exposes the rotated refresh token via currentRefreshToken (P7 persistence)', async () => {
+    const auth = makeAuth();
+    expect(auth.currentRefreshToken).toBe('bootstrap-refresh');
+    await auth.getAccessToken();
+    expect(auth.currentRefreshToken).toBe('rotated-refresh-1');
+  });
 });
