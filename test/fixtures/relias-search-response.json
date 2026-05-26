@@ -1,0 +1,165 @@
+{
+  "courses": [
+    {
+      "courseOrgID": null,
+      "orgID": 20084,
+      "courseLastModifiedDate": null,
+      "courseDeleted": false,
+      "courseAttributeInfo": [
+        {
+          "orgName": null,
+          "selfEnrollable": 1,
+          "restrictedUser": false,
+          "approvedForEnrollment": true,
+          "availableStartDate": null,
+          "availableEndDate": null,
+          "prerequisiteCourseID": 0,
+          "courseAttributeDeleted": false,
+          "instructorID": null
+        }
+      ],
+      "courseInfo": [
+        {
+          "courseID": 1899526,
+          "ownerOrgID": 1,
+          "courseTitle": "Building and Leading Successful Teams",
+          "courseDescription": "Building teams is essential to personal and organizational success.",
+          "courseCode": "REL-ALL-SS-BLST",
+          "isAvailableGenerally": true,
+          "courseArchiveDate": null,
+          "courseType": 0,
+          "courseTypeName": null,
+          "author": null,
+          "contentInstructor": null,
+          "learningObjectives": null,
+          "courseOutline": "",
+          "releaseDate": "2026-05-02T00:00:00+00:00",
+          "contentExpirationDate": "2040-12-31T00:00:00+00:00",
+          "targetAudience": "All Staff",
+          "accessibility": false,
+          "courseHours": "1.00",
+          "courseHoursNumeric": 1,
+          "courseBriefDescription": "Methods for team building and team leadership.",
+          "courseAudioIncluded": true,
+          "courseVideo": 2,
+          "isMobileCompatible": false,
+          "curriculaIDs": []
+        }
+      ],
+      "courseLicenseInfo": null,
+      "courseRenewalTopicInfo": null,
+      "highlights": null,
+      "score": 1,
+      "courseCertificateInfo": null,
+      "courseProfessionInfo": null
+    },
+    {
+      "courseOrgID": null,
+      "orgID": 20084,
+      "courseLastModifiedDate": null,
+      "courseDeleted": false,
+      "courseAttributeInfo": [
+        {
+          "orgName": null,
+          "selfEnrollable": 1,
+          "restrictedUser": false,
+          "approvedForEnrollment": true,
+          "availableStartDate": null,
+          "availableEndDate": null,
+          "prerequisiteCourseID": 0,
+          "courseAttributeDeleted": false,
+          "instructorID": null
+        }
+      ],
+      "courseInfo": [
+        {
+          "courseID": 1888146,
+          "ownerOrgID": 1,
+          "courseTitle": "RapidReg: Compressed Medical Gas Cylinders Proficiency Check",
+          "courseDescription": "How to safely handle, label, store, and inspect compressed medical gas cylinders.",
+          "courseCode": "REL-ALL-0-RRCMGCPC",
+          "isAvailableGenerally": true,
+          "courseArchiveDate": null,
+          "courseType": 0,
+          "courseTypeName": null,
+          "author": null,
+          "contentInstructor": null,
+          "learningObjectives": "Recall best practices to safely handle compressed medical gas cylinders.",
+          "courseOutline": "<p>Section 1: Medical Gas Cylinder Safety</p>",
+          "releaseDate": "2026-05-01T00:00:00+00:00",
+          "contentExpirationDate": "2029-12-31T00:00:00+00:00",
+          "targetAudience": "All Staff",
+          "accessibility": true,
+          "courseHours": "0.15",
+          "courseHoursNumeric": 0.15,
+          "courseBriefDescription": "Strategies to safely handle compressed medical gas cylinders.",
+          "courseAudioIncluded": true,
+          "courseVideo": 0,
+          "isMobileCompatible": false,
+          "curriculaIDs": []
+        }
+      ],
+      "courseLicenseInfo": null,
+      "courseRenewalTopicInfo": null,
+      "highlights": null,
+      "score": 1,
+      "courseCertificateInfo": null,
+      "courseProfessionInfo": null
+    },
+    {
+      "courseOrgID": null,
+      "orgID": 20084,
+      "courseLastModifiedDate": null,
+      "courseDeleted": false,
+      "courseAttributeInfo": [
+        {
+          "orgName": null,
+          "selfEnrollable": 1,
+          "restrictedUser": false,
+          "approvedForEnrollment": true,
+          "availableStartDate": null,
+          "availableEndDate": null,
+          "prerequisiteCourseID": 0,
+          "courseAttributeDeleted": false,
+          "instructorID": null
+        }
+      ],
+      "courseInfo": [
+        {
+          "courseID": 1872078,
+          "ownerOrgID": 1,
+          "courseTitle": "Effective Problem Solving in the Workplace",
+          "courseDescription": "Strategies to solve problems in the workplace.",
+          "courseCode": "REL-ALL-0-EFPSW",
+          "isAvailableGenerally": true,
+          "courseArchiveDate": null,
+          "courseType": 0,
+          "courseTypeName": null,
+          "author": null,
+          "contentInstructor": null,
+          "learningObjectives": "Recognize common obstacles to effective problem solving.",
+          "courseOutline": "<p>Section 1: Problem Solving in the Workplace</p>",
+          "releaseDate": "2026-05-01T00:00:00+00:00",
+          "contentExpirationDate": "2028-12-31T00:00:00+00:00",
+          "targetAudience": "Administration; All Staff",
+          "accessibility": true,
+          "courseHours": "1.00",
+          "courseHoursNumeric": 1,
+          "courseBriefDescription": "Strategies to solve problems in the workplace.",
+          "courseAudioIncluded": false,
+          "courseVideo": 0,
+          "isMobileCompatible": false,
+          "curriculaIDs": ["637638", "639322"]
+        }
+      ],
+      "courseLicenseInfo": null,
+      "courseRenewalTopicInfo": null,
+      "highlights": null,
+      "score": 1,
+      "courseCertificateInfo": null,
+      "courseProfessionInfo": null
+    }
+  ],
+  "coursesExport": null,
+  "totalCount": 3
+}

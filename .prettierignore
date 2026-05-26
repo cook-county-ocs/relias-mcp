@@ -6,3 +6,5 @@ docs/specs
 # PR review log is Marty's free-form artifact — not subject to the formatter
 # (ecosystem CLAUDE.md: "do not impose structure").
 docs/pr-review-log.md
+# Captured API fixtures are verbatim ground truth — don't reformat.
+test/fixtures
