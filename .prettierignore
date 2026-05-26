@@ -3,3 +3,6 @@ coverage
 node_modules
 package-lock.json
 docs/specs
+# PR review log is Marty's free-form artifact — not subject to the formatter
+# (ecosystem CLAUDE.md: "do not impose structure").
+docs/pr-review-log.md
