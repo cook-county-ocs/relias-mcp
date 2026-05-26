@@ -18,6 +18,7 @@
 |---|---|---|
 | 1.0 | 2026-05-26 | Initial release |
 | 1.1 | 2026-05-26 | Added §7 Chores (C1–C13) with operational chore tracking; updated §8 Phase Ladder with chore-prereq column; added meta-note on feature/chore division as PM primitive; folded `RELIAS_GH_DISPATCH_TOKEN` into the secrets list (was previously only in §6); pointer to companion `relias-mcp-v1.0-chores.md` doc |
+| 1.2 | 2026-05-26 | §11: recorded two v1.1 deferrals from Marty — a browser-operable GUI (required by OCS-Pivot / LD-07; CLI alone doesn't serve the OCS seats) and an OpenAPI document describing relias-mcp's own surface for downstream citizens. No v1.0 scope change. |
 
 ---
 
@@ -516,6 +517,8 @@ Do not build these. They are LD-RM-05 deferrals.
 - **Multi-org support** — AOIC's `orgID=20084` is hardcoded as the default. Make it configurable in `.env`, but don't build the abstraction for multiple orgs simultaneously.
 - **Anything that writes to Relias** — v1.0 is read-only against Relias. The `relias-force-refresh` tool dispatches the snapshot workflow, which is a write to *our* infrastructure, not theirs.
 - **Automatic secret rotation** — the OIDC refresh token expires (~30-90 days). v1.0 expects Marty to re-do C7/C8 manually. v1.1 may add a "secrets-expiring-soon" check to the doctor command.
+- **GUI / web front-end** — v1.1. The CLI suffices for v1.0 (Marty + cron) and the MCP server covers AI-agent integration, but neither satisfies the **OCS-Pivot principle** (ecosystem LD-07): the manual recovery path must be completable "by a senior probation manager with Office 365 and a web browser." A terminal CLI is not a skill available to the actual OCS seats (Shelly, Leanne), so reconciliation-on-demand needs a browser-operable GUI for OCS-Pivot to hold. Deferred to v1.1, not dropped.
+- **OpenAPI document** — v1.1. v1.0 pins the *Relias* contract with runtime Zod validation (no published OpenAPI exists upstream). Separately, publishing an OpenAPI/Swagger description of *our own* surface (library + CLI + MCP) for downstream citizens is a v1.1 item — it makes relias-mcp a documented producer in the ecosystem contract pattern.
 
 ---
 
