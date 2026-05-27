@@ -30,3 +30,30 @@ Setting up the project and enforcing the 5% learning rule in Git. Setting up fea
 # Next steps
 
 - See if I can read more of the code and maybe take on one task
+
+------
+
+# Pull Request Number
+- 2 - 10
+
+# Description
+- 2: add dependabot
+- 3: update a dependency from 4 to 6
+- 4: update es/lint fron 9.34 to 10
+- 9: adding code to pull the refresh token
+  - Complicaiton discoverd: I had to have claude adjust the rules from 1 to 0, so i could approve the work.
+- 7: bumping pino
+- bumpting node
+- This PR is about gettign all dependencies up to be LTS packages
+
+# WhatI learned
+- how to use github ui to review, comment,check and merge
+  - all but merge was a new lesson, but even the mege was new due to the enhanced rules regarding merging
+
+# what I'd do different
+- one pr to bump all the versions of libraries. while the one at a time helped me learn, it was tedious.
+- theres a p7 tag on things. I know we set Features, Chores, and tasks. I think Claude just added a P (phase?)
+
+# next steps:
+- determine P
+- finish f1b 
