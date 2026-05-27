@@ -30,7 +30,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.9.1",
-    "@vitest/coverage-v8": "^3.0.0",
+    "@vitest/coverage-v8": "^4.1.7",
     "eslint": "^10.4.0",
     "eslint-config-prettier": "^9.1.0",
     "msw": "^2.14.6",
@@ -38,7 +38,7 @@
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.0.0",
-    "vitest": "^3.0.0"
+    "vitest": "^4.1.7"
   },
   "dependencies": {
     "openid-client": "^6.8.4",
