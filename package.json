@@ -43,6 +43,7 @@
   "dependencies": {
     "openid-client": "^6.8.4",
     "pino": "^10.3.1",
+    "simple-git": "^3.36.0",
     "zod": "^3.25.76"
   }
 }

@@ -77,3 +77,75 @@ export interface ReliasCourse {
   releaseDate: string | null;
   archiveDate: string | null;
 }
+
+// --- F3: snapshot store + diff engine ---------------------------------------
+
+/**
+ * A frozen capture of the COPE catalog at a moment in time. What F3 persists
+ * to the snapshots repo and what F4's reconciliation engine reads as the
+ * canonical "what Relias says today."
+ */
+export interface ReliasSnapshot {
+  /** ISO8601 UTC, e.g. `2026-05-27T16:15:30Z`. The primary timestamp surfaced everywhere. */
+  capturedAt: string;
+  /** Where this snapshot came from. v1.0 always `relias-search-api`; v2 may add others. */
+  source: 'relias-search-api';
+  /** Number of courses captured (equals `courses.length` — surfaced for sanity-check on reads). */
+  totalCount: number;
+  /** The captured catalog, primary key is `courseID`. */
+  courses: ReliasCourse[];
+}
+
+/**
+ * Lightweight handle for a snapshot stored in the repo. `list()` and `save()`
+ * return these; pass one back to `loadByMeta()` to materialize the full
+ * snapshot. The `sha` is the git commit hash (only present after a successful
+ * push); local-only saves have it undefined.
+ */
+export interface SnapshotMeta {
+  /** ISO8601 UTC matching the snapshot's `capturedAt`. */
+  capturedAt: string;
+  /** Path within the snapshots repo, e.g. `snapshots/2026-05-27T16-15-30Z.json`. */
+  path: string;
+  /** Course count, same as `ReliasSnapshot.totalCount`. */
+  totalCount: number;
+  /** Git commit SHA of the save, when the store pushed. */
+  sha?: string;
+}
+
+/**
+ * The diff between two consecutive snapshots. Computed by the F3 diff engine,
+ * persisted to `diffs/`, and surfaced by the F6 MCP tool `relias-get-latest-diff`.
+ * Primary key throughout is `courseID` (LD-RM-12).
+ */
+export interface ReliasDiff {
+  /** The earlier snapshot's identity. */
+  from: { capturedAt: string };
+  /** The later snapshot's identity. */
+  to: { capturedAt: string };
+  /** Courses present in `to` but not in `from`. */
+  added: ReliasCourse[];
+  /** Courses present in `from` but not in `to`. */
+  removed: ReliasCourse[];
+  /**
+   * Courses present in both, where at least one tracked field differs. `fields`
+   * lists the names of the changed fields (e.g. `["title", "hours"]`) so
+   * consumers don't have to recompute the diff themselves.
+   */
+  changed: ReliasDiffChange[];
+  /** Pre-computed counts to spare consumers a `.length` walk. */
+  summary: {
+    addedCount: number;
+    removedCount: number;
+    changedCount: number;
+  };
+}
+
+/** One entry in `ReliasDiff.changed`. */
+export interface ReliasDiffChange {
+  courseID: number;
+  before: ReliasCourse;
+  after: ReliasCourse;
+  /** Names of the {@link ReliasCourse} fields whose values differ. Sorted. */
+  fields: string[];
+}
