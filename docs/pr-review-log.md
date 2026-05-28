@@ -57,3 +57,20 @@ Setting up the project and enforcing the 5% learning rule in Git. Setting up fea
 # next steps:
 - determine P
 - finish f1b 
+
+# Pull Request Number
+- [12](https://github.com/cook-county-ocs/relias-mcp/pull/12)
+
+# Description
+- building presistance with github and the difference engine
+- lots of items I am not sure how I can test.
+
+# what I learned:
+- the tests did not test integration
+- the things to review are things i wouldn't know how to review
+
+# what I'd do differently
+- I did push to get f3 done, which is good. but i think i may have missed out on some learning.
+
+# next steps
+- f4!
