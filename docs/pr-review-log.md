@@ -98,3 +98,21 @@ Setting up the project and enforcing the 5% learning rule in Git. Setting up fea
 
 # next steps
 - f4b.
+
+# [PR-14](https://github.com/cook-county-ocs/relias-mcp/pull/15)
+
+# Description
+- Feature 4, pr-2b.
+- WE divvied up the prs to chunk the work into related tasks
+
+# what I learned
+- the algo worked 
+- - and e2e tests was the right call
+- Regex + algo seems to be a way to make this work
+
+# what I would do differently
+- NLP has been a thing I've wanted to learn for so long. I could have done more here -- but the eco system is very far behind. I need to get this working asap.
+
+# next step
+- testing the CI 
+- v 1.1
