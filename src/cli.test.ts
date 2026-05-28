@@ -373,6 +373,31 @@ describe('CLI: error handling', () => {
     else process.env.RELIAS_SNAPSHOTS_REMOTE = originalEnvRemote;
   });
 
+  it('doctor renders the UNHEALTHY report (does NOT exit 4) when run with no env via real context', async () => {
+    // Regression test: doctor used to exit 4 with MissingEnvError because
+    // it ran buildContext('readonly') which requires RELIAS_SNAPSHOTS_REMOTE.
+    // The fix routes doctor through 'inspect' mode that requires nothing,
+    // so the report renders even with no env set. Caught during F5 demo.
+    delete process.env.RELIAS_OIDC_REFRESH_TOKEN;
+    delete process.env.RELIAS_SNAPSHOTS_REMOTE;
+    let stdout = '';
+    let stderr = '';
+    const exitCode = await runCli({
+      argv: ['node', 'relias-mcp', 'doctor'],
+      stdout: (s) => {
+        stdout += s;
+      },
+      stderr: (s) => {
+        stderr += s;
+      },
+      // No contextFactory — exercises createDefaultContext('inspect').
+    });
+    expect(exitCode).toBe(1); // unhealthy, but report rendered
+    expect(stdout).toContain('UNHEALTHY');
+    expect(stdout).toContain('RELIAS_OIDC_REFRESH_TOKEN');
+    expect(stderr).not.toContain('missing required environment variables');
+  });
+
   it('snapshot exits 4 (MissingEnvError) when run with no env (real context)', async () => {
     delete process.env.RELIAS_OIDC_REFRESH_TOKEN;
     delete process.env.RELIAS_SNAPSHOTS_REMOTE;

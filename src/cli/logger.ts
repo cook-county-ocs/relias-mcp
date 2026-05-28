@@ -9,8 +9,15 @@ import { pino, type Logger } from 'pino';
  * - `--quiet`: pino at `error` level. Only failures emit. Useful for
  *   piping to other tools.
  * - default: `info` level. Headline progress + summary stats emit.
- * - `--json`: switch transport from pretty to raw JSON for machine
- *   consumers (the cron's notification step parses these lines).
+ * - `--json`: emit the command result as structured JSON on stdout.
+ *
+ * **Logs always go to stderr.** Standard CLI hygiene: machine output on
+ * stdout, diagnostics on stderr. Without this split, `--json` output
+ * gets interleaved with pino log lines and downstream `jq`/parsers
+ * choke (the CLI's own JSON would be a single document, but pino emits
+ * multiple JSON-line documents in between — invalid as a stream of one
+ * value). The cron's notification step gets logs via 2>&1 redirection
+ * when it wants them.
  *
  * Secret redaction is always on (per F1's pino setup convention) — the
  * OIDC access/refresh/id tokens never appear in CLI output regardless
@@ -32,10 +39,7 @@ export function createCliLogger(opts: LoggerOptions = {}): Logger {
       remove: true,
     },
   };
-  // Default to JSON-line output (pino's native format) — universally
-  // parseable by the cron's notification step and by humans on
-  // narrow terminals. --json explicitly opts in to that same format.
-  // For interactive sessions a future enhancement could swap to
-  // pino-pretty, but adding the transport dep isn't worth it for v1.0.
-  return pino(baseOptions);
+  // process.stderr as destination — pino accepts any Writable. Stays
+  // synchronous (fine for a short-lived CLI; cron doesn't care).
+  return pino(baseOptions, process.stderr);
 }
