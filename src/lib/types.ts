@@ -149,3 +149,43 @@ export interface ReliasDiffChange {
   /** Names of the {@link ReliasCourse} fields whose values differ. Sorted. */
   fields: string[];
 }
+
+// --- F4: file parsers + reconciliation engine -------------------------------
+
+/**
+ * One row extracted from a coordinator-supplied catalog file (PDF, XLSX, CSV,
+ * or DOCX). The normalized shape that all four {@link FileParser}s emit, so
+ * the F4 reconciliation engine has one type to match against
+ * {@link ReliasSnapshot.courses}.
+ *
+ * Why each field is nullable:
+ *  - `reliasCode`: AOIC catalogs sometimes omit the Relias code column entirely;
+ *    rows then match by title (fuzzy) at reconciliation time.
+ *  - `hours`: same — coordinator-built worksheets don't always carry hours.
+ *
+ * `raw` preserves the source-format-specific row so debug output can show
+ * exactly what the parser saw (XLSX column headers, CSV row index, etc.)
+ * without forcing the normalized schema to grow.
+ */
+export interface ParsedCatalogEntry {
+  title: string;
+  reliasCode: string | null;
+  hours: number | null;
+  /** Source-format-specific snapshot of the row; opaque to the reconciliation engine. */
+  raw: Record<string, unknown>;
+}
+
+/**
+ * Parser strategy for one input file format. The four v1.0 parsers
+ * (pdf/xlsx/csv/docx) all implement this. The parser factory in
+ * `file-parsers/index.ts` picks by file extension.
+ *
+ * Parsers take a `Buffer` (not a path) so the caller controls I/O — useful
+ * for the F6 MCP server, which may receive bytes over stdio instead of
+ * reading from disk.
+ */
+export interface FileParser {
+  /** Format identifier surfaced in error messages. */
+  readonly format: 'pdf' | 'xlsx' | 'csv' | 'docx';
+  parse(buffer: Buffer): Promise<ParsedCatalogEntry[]>;
+}
