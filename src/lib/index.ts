@@ -27,6 +27,16 @@ export {
   type GitJsonSnapshotStoreOptions,
 } from './git-json-snapshot-store.js';
 export { diff } from './diff-engine.js';
+export type { ParsedCatalogEntry, FileParser } from './types.js';
+export {
+  parserForExtension,
+  UnsupportedFileFormatError,
+  PdfCatalogParser,
+  XlsxCatalogParser,
+  CsvCatalogParser,
+  DocxCatalogParser,
+  parseCatalogText,
+} from './file-parsers/index.js';
 
 /** The library's package name, as published. */
 export const PACKAGE_NAME = '@cook-county-ocs/relias-mcp';
