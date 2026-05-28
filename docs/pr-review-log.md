@@ -74,3 +74,27 @@ Setting up the project and enforcing the 5% learning rule in Git. Setting up fea
 
 # next steps
 - f4!
+
+# [Pr 14](https://github.com/cook-county-ocs/relias-mcp/pull/14)
+
+# Description
+- Algorithim spec, in 2 parts
+  - This is the math one where the analysis begins.
+  - Normalizing
+  - levenshtein
+  - jaro-winkler
+  - token-set-ratio
+  - code-parsing/splitter
+
+# what I learned
+- alittle bit about the two main kinds of algorhims: what they are good for
+  - Jaro is for 
+    - capitols, order,
+  - Levenshtein: transpotions
+
+# what I'd do differently
+- take a course on algorphyms. 
+- is this something that already exists in libarires? it has to!
+
+# next steps
+- f4b.
