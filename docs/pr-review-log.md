@@ -99,7 +99,7 @@ Setting up the project and enforcing the 5% learning rule in Git. Setting up fea
 # next steps
 - f4b.
 
-# [PR-14](https://github.com/cook-county-ocs/relias-mcp/pull/15)
+# [PR-15](https://github.com/cook-county-ocs/relias-mcp/pull/15)cd
 
 # Description
 - Feature 4, pr-2b.
@@ -114,5 +114,33 @@ Setting up the project and enforcing the 5% learning rule in Git. Setting up fea
 - NLP has been a thing I've wanted to learn for so long. I could have done more here -- but the eco system is very far behind. I need to get this working asap.
 
 # next step
-- testing the CI 
-- v 1.1
+- testing the CLI
+- v 1.0
+
+# [pr-16](https://github.com/cook-county-ocs/relias-mcp/pull/16)
+
+# Description:
+- Bulding a CLI tool to look for differences between relias pdfs and relias courses
+- testing with the github repo
+
+# what i learned
+- Setting up the github repo was solid
+- double checking claude's work 
+  - huge drift between my **F**eature, **C**hore, **T**ask structure
+  - Great opportunity to do some learning for a deeper and maybe faster learning set up
+- very clear lesson: set env. keys with the shell command export. export foo="variable"
+  - how do I remove it
+    - unset!
+- how to add the file in git -- with relative paths, duh!
+
+# what I would do differently
+- if tmux was set up, maybe review more?
+- if I had more time, take on some basic ts function
+  - to support this, and becaue it ties in to a lot, i will look into the diff persistnce feature. if i'm right, the cli will save the diff to a github repo for review
+    - what is the persitnce format?
+      - i believe json with an ability to push to neon eventually
+
+# next steps
+- At the office, run the cli
+- f6
+- v1.1 planning (gui?)
