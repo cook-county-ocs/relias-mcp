@@ -37,6 +37,26 @@ export {
   DocxCatalogParser,
   parseCatalogText,
 } from './file-parsers/index.js';
+export {
+  reconcile,
+  compositeScore,
+  classifyDrift,
+  titleSimilarity,
+  hoursSimilarity,
+  codeSimilarity,
+  WEIGHTS,
+  THRESHOLDS,
+  HOURS_BANDS,
+  MAX_ALTERNATES,
+  type DriftType,
+  type CompositeBreakdown,
+  type ReconciliationResult,
+  type ReconciliationSummary,
+  type BothMatch,
+  type DriftEntry,
+  type AlternateCandidate,
+  type MatchType,
+} from './reconciliation/index.js';
 
 /** The library's package name, as published. */
 export const PACKAGE_NAME = '@cook-county-ocs/relias-mcp';
