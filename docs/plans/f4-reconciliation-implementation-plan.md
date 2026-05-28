@@ -19,7 +19,7 @@
 
 ## 1. Purpose
 
-Sub-spec is canonical for the *what*. This plan settles the *how* — the open implementation questions the sub-spec leaves to judgment, the PR cluster shape, the file layout deviations, and the build order under the paired-work model Marty named in this session ("F4 reconciliation engine — I'll work on the algorithm with Claude Code").
+Sub-spec is canonical for the _what_. This plan settles the _how_ — the open implementation questions the sub-spec leaves to judgment, the PR cluster shape, the file layout deviations, and the build order under the paired-work model Marty named in this session ("F4 reconciliation engine — I'll work on the algorithm with Claude Code").
 
 Where this plan and the sub-spec disagree on intent, the sub-spec wins. Where this plan adds detail the sub-spec was silent on, it's the working answer until a follow-on plan supersedes.
 
@@ -78,6 +78,7 @@ Edge case: title is never null — parsers throw or skip on missing title — so
 **§3.5 PR cluster shape.** Sub-spec §9 lists nine sequential build steps. Each could be a PR (nine PRs) or several could batch (one or two PRs).
 
 **Recommendation: two PRs.**
+
 - **F4 PR-2a — Math primitives.** normalize, levenshtein, jaro-winkler, token-set-ratio, code-parser. Five files + tests. All pure functions. Claude can write the reference implementations from the sub-spec pseudocode; Marty reviews and signs off (light 🎓 — Marty learns by reading clear reference code rather than by typing it).
 - **F4 PR-2b — Engine.** Four similarity helpers + composite-score + reconciliation engine + drift classifier + end-to-end fixture test. Marty drives design judgment interactively (paired session); Claude writes the TypeScript from Marty's direction. This is the dense 🎓 PR.
 
@@ -88,6 +89,7 @@ The "or batch them" option exists. Two PRs keeps each review tractable.
 **Decision (Marty, 2026-05-28):** fold the PDF regex INTO PR-2b. Rationale: regex is magic and gets confusing fast; co-develop it with the engine and test it vigorously rather than deferring to PR-3.
 
 PR-2b grows accordingly:
+
 - The engine work as originally planned
 - `parseCatalogText()` implementation in `src/lib/file-parsers/extract-from-text.ts`
 - Heavy test coverage on the regex: per-row extraction cases for every distinct row shape in the TY25 catalog (header row, data row with all 3 fields, data row with X-marks for audience, multi-line title, edge-case formatting), plus negative cases (junk lines, page breaks, headers)
@@ -101,6 +103,7 @@ PR-3 collapses to either disappearing entirely (its work folded in) or becoming 
 **Branch:** `F4/fuzzy-primitives`
 
 **Files (all new):**
+
 - `src/lib/fuzzy/normalize.ts` + `normalize.test.ts`
 - `src/lib/fuzzy/levenshtein.ts` + `levenshtein.test.ts`
 - `src/lib/fuzzy/jaro-winkler.ts` + `jaro-winkler.test.ts`
@@ -111,12 +114,14 @@ PR-3 collapses to either disappearing entirely (its work folded in) or becoming 
 **Approach for each:** copy reference implementation from the sub-spec pseudocode (it's pseudocode but close to working TypeScript). Tests come from the sub-spec test stubs verbatim; expand where coverage demands.
 
 **Acceptance:**
+
 - 5 files × ~30–60 lines = ~250 LOC source + ~150 LOC tests
 - 100% function coverage; 80%+ branch coverage (project threshold)
 - All sub-spec test stubs pass
 - No new runtime deps (Levenshtein, Jaro-Winkler are pure math; the sub-spec recommended inlining rather than depending on `fastest-levenshtein` or `string-similarity` and I agree)
 
 **Out of scope for PR-2a:**
+
 - The integration layer (similarity helpers, composite, engine) — PR-2b
 - Audience handling — deferred per §3.1
 - Any reconciliation logic
@@ -126,6 +131,7 @@ PR-3 collapses to either disappearing entirely (its work folded in) or becoming 
 **Branch:** `F4/reconciliation-engine`
 
 **Files (all new unless noted):**
+
 - `src/lib/reconciliation/types.ts` — `ReconciliationResult`, `BothMatch`, `DriftEntry`, `DriftType` enum, `MatchType` enum, `Audience` type (defined but unused in v1.0 — present for v1.1 forward-compatibility)
 - `src/lib/reconciliation/similarity.ts` — `titleSimilarity`, `hoursSimilarity`, `codeSimilarity` (the four per spec; audience deferred). One file rather than four because they're 5–15 LOC each.
 - `src/lib/reconciliation/similarity.test.ts`
@@ -137,6 +143,7 @@ PR-3 collapses to either disappearing entirely (its work folded in) or becoming 
 - `src/lib/index.ts` — add exports
 
 **Type additions to `src/lib/types.ts`:**
+
 ```typescript
 // Re-exported from reconciliation/types.ts for the public library surface.
 // Defined in reconciliation/types.ts so the test layout doesn't pull all of
@@ -146,6 +153,7 @@ PR-3 collapses to either disappearing entirely (its work folded in) or becoming 
 (Plan deliberately doesn't pre-decide where the types live — Marty's call during paired build.)
 
 **Composite weights as code (per §3.1 decision):**
+
 ```typescript
 // v1.0 — audience deferred. See docs/plans/f4-reconciliation-
 // implementation-plan.md §3.1. Restore the 4-component weighting in v1.1
@@ -153,19 +161,21 @@ PR-3 collapses to either disappearing entirely (its work folded in) or becoming 
 export const WEIGHTS = {
   title: 0.75,
   hours: 0.15,
-  code: 0.10,
+  code: 0.1,
 } as const;
 ```
 
 **Thresholds (per sub-spec):**
+
 ```typescript
 export const THRESHOLDS = {
   match: 0.85,
-  drift: 0.70,
+  drift: 0.7,
 } as const;
 ```
 
 **The reconcile loop (per sub-spec §4) with §3 adjustments applied:**
+
 - Phase 1: exact code match (skip when pdf.reliasCode is null — falls to Phase 2)
 - Phase 2: composite fuzzy match against unclaimed Relias entries
 - Phase 3: unclaimed Relias entries → reliasOnly
@@ -173,6 +183,7 @@ export const THRESHOLDS = {
 **Test surface for PR-2b:**
 
 Engine tests (`reconciliation-engine.test.ts`) — minimum cases:
+
 - Empty file → all snapshot courses to reliasOnly, no fileOnly, no drift
 - Empty snapshot → all file entries to fileOnly, no inBoth, no drift
 - Exact-code-only matches → all inBoth, matchType='exact-code', driftType='identical'
@@ -183,12 +194,14 @@ Engine tests (`reconciliation-engine.test.ts`) — minimum cases:
 - The `0.07h` data-entry-error case from Plan A findings — hoursSimilarity returns 0.0 but title and code might carry → check whether composite still hits 0.70 (and if it does, that's a feature: medium-confidence drift catches the data-entry error)
 
 End-to-end test (`reconciliation-engine.test.ts` separate `describe` block):
+
 - Hand-built `ParsedCatalogEntry[]` mirroring ~5 PDF entries
 - Hand-built `ReliasSnapshot` with ~10 courses
 - Assert the bucket counts match expectation
 - Defer the real-PDF version to PR-3
 
 **Acceptance:**
+
 - All similarity helpers pass their sub-spec test stubs
 - Composite-score tests cover identical, single-drift, multi-drift, version-bump cases
 - Engine tests cover the cases above
@@ -224,7 +237,7 @@ At each step: write the code, run tests, commit. Six commits on the branch is fi
 Re-stating because they're easy to slip into during paired work:
 
 - **Don't reach for a third-party fuzzy library.** `fastest-levenshtein`, `string-similarity`, `fuse.js` all exist. Sub-spec author recommended inlining the math, and the recommendation is correct — fewer surface deps, no version churn, no tree-shaking surprises. Reference implementations are 30–50 LOC each.
-- **Don't pre-filter by code prefix.** "Only fuzzy-match within REL-BHC-*" is wrong (breaks on category drift). Composite score handles it.
+- **Don't pre-filter by code prefix.** "Only fuzzy-match within REL-BHC-\*" is wrong (breaks on category drift). Composite score handles it.
 - **Don't accumulate booleans.** "title matches AND hours match AND ..." is brittle. Composite + threshold is the design.
 - **Don't tune thresholds before real data.** v1.0 values are starting points. Review gates in sub-spec §6 are where they earn their keep. PR-3 produces the first real-data run.
 - **Don't add more composite components without removing others.** If we discover release-date proximity matters during PR-3, it replaces a weak existing component (probably `code` if its weight drops with PDF coverage being good enough on its own).
@@ -253,6 +266,7 @@ These don't block PR-2a but need a decision before PR-2b lands:
 ## 11. File-Naming Chore (resolved inline)
 
 The sub-spec file was originally at `docs/specs/F4 — Reconciliation Algorithm Sub-Spec.md` (spaces, em-dash, PascalCase — violates LD-RM-14) AND was never committed to main despite being referenced from the parent spec. Both issues resolved as part of PR-2a's opening chore commit:
+
 - Renamed to `docs/specs/f4-reconciliation-algorithm.md` (kebab-case per LD-RM-14)
 - Committed for the first time (the file existed only in Marty's working tree, untracked, since 2026-05-26)
 
@@ -266,7 +280,7 @@ The 🎓 spirit is preserved by Marty owning judgment: which weight to redistrib
 
 If the algorithm doesn't pass the §6 review gates on the first real-data run (PR-3), that's the system working as intended. The tuning happens after data, not before.
 
------
+---
 
 May 28, 2026
 
