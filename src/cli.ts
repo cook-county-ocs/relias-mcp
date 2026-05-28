@@ -56,10 +56,16 @@ export async function runCli(opts: CliRunOptions = {}): Promise<number> {
 
   let exitCode = 0;
 
-  function buildContext(mode: 'snapshot' | 'readonly'): CliContext {
+  function buildContext(mode: 'snapshot' | 'readonly' | 'inspect'): CliContext {
     const g = program.opts() as { verbose?: boolean; quiet?: boolean; json?: boolean };
     const logger = createCliLogger({ verbose: g.verbose, quiet: g.quiet, json: g.json });
-    return opts.contextFactory ? opts.contextFactory(mode) : createDefaultContext(logger, mode);
+    // contextFactory in tests gets a coarser-grained mode ('snapshot' or
+    // 'readonly') — tests don't need to differentiate 'inspect' from
+    // 'readonly' since they always provide their own mock context.
+    const factoryMode = mode === 'inspect' ? 'readonly' : mode;
+    return opts.contextFactory
+      ? opts.contextFactory(factoryMode)
+      : createDefaultContext(logger, mode);
   }
 
   program
@@ -138,9 +144,11 @@ export async function runCli(opts: CliRunOptions = {}): Promise<number> {
     .description('Pre-flight: env vars, IdP reachable, snapshots repo reachable, parsers loadable')
     .action(async () => {
       try {
-        // 'readonly' so doctor inspects env directly and reports missing
-        // as soft failures rather than hard-erroring during build.
-        const ctx = buildContext('readonly');
+        // 'inspect' mode requires NO env vars at context-build time.
+        // doctor inspects env explicitly and reports missing as soft
+        // failures — hard-erroring during build would prevent the
+        // report from ever rendering, defeating the command's purpose.
+        const ctx = buildContext('inspect');
         const report = await runDoctor(ctx);
         if ((program.opts() as { json?: boolean }).json) {
           stdout(JSON.stringify(report, null, 2) + '\n');

@@ -24,6 +24,7 @@
     "format": "prettier --write .",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "dev:cli": "tsx src/cli.ts",
     "dev:mcp": "tsx src/mcp.ts"
   },

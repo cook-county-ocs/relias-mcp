@@ -34,7 +34,7 @@ export interface CliContext {
 
 export function createDefaultContext(
   logger: Logger,
-  mode: 'snapshot' | 'readonly' = 'snapshot',
+  mode: 'snapshot' | 'readonly' | 'inspect' = 'snapshot',
 ): CliContext {
   // Resolve env up front so missing-var errors surface before any
   // network/disk work. mode='readonly' lets commands like `reconcile`

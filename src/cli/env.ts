@@ -41,10 +41,20 @@ const REQUIRED_FOR_READONLY: ReadonlyArray<keyof EnvSpec> = ['RELIAS_SNAPSHOTS_R
 
 /**
  * Resolve env vars and validate that the required ones for a given mode
- * are present. Throws `MissingEnvError` listing missing vars on failure.
+ * are present.
+ *
+ *  - `snapshot` — requires OIDC token + snapshots remote. Throws on missing.
+ *  - `readonly` — requires snapshots remote only. Throws on missing.
+ *  - `inspect`  — requires nothing. For the doctor command, which inspects
+ *    env explicitly and would rather report missing-vars as a soft failure
+ *    than exit before the report can render.
  */
-export function resolveEnv(mode: 'snapshot' | 'readonly', source: EnvSpec = process.env): EnvSpec {
-  const required = mode === 'snapshot' ? REQUIRED_FOR_SNAPSHOT : REQUIRED_FOR_READONLY;
+export function resolveEnv(
+  mode: 'snapshot' | 'readonly' | 'inspect',
+  source: EnvSpec = process.env,
+): EnvSpec {
+  const required =
+    mode === 'snapshot' ? REQUIRED_FOR_SNAPSHOT : mode === 'readonly' ? REQUIRED_FOR_READONLY : [];
   const missing = required.filter((k) => !source[k] || source[k]?.trim() === '');
   if (missing.length > 0) {
     throw new MissingEnvError(missing);
