@@ -13,10 +13,20 @@ export type {
   OidcAuthOptions,
   AccessTokenProvider,
   ReliasCourse,
+  ReliasSnapshot,
+  SnapshotMeta,
+  ReliasDiff,
+  ReliasDiffChange,
 } from './types.js';
 export { OidcAuth } from './oidc-auth.js';
 export { SearchApi, SchemaDriftError, type SearchApiOptions } from './search-api.js';
 export type { ReliasSearchResponse } from './schemas/relias-search.js';
+export type { SnapshotStore, ListOpts } from './snapshot-store.js';
+export {
+  GitJsonSnapshotStore,
+  type GitJsonSnapshotStoreOptions,
+} from './git-json-snapshot-store.js';
+export { diff } from './diff-engine.js';
 
 /** The library's package name, as published. */
 export const PACKAGE_NAME = '@cook-county-ocs/relias-mcp';
