@@ -144,3 +144,17 @@ Setting up the project and enforcing the 5% learning rule in Git. Setting up fea
 - At the office, run the cli
 - f6
 - v1.1 planning (gui?)
+
+# [PR-17](https://github.com/cook-county-ocs/relias-mcp/pull/17)
+
+# Description
+- Building the MCP
+- 
+# What I learned 
+- How to make a zsh script and ensure it is executable!
+- how to run the cli with npm dev
+  
+# what i would do differently
+- review more ts code. 
+- understand the integration and environment envs better for additional testing.
+- Write down key env steps so I can find them with a simple search of my console
