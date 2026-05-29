@@ -8,28 +8,41 @@
  * (`unauthorized_client`) but allows authorization_code, and the IdP advertises
  * the `offline_access` scope, so a refresh token is obtainable this way.
  *
- * Usage (run locally, while logged into Relias in your browser):
+ * **Output convention** (added 2026-05-28 for shell-capture support):
+ *  - All user-visible output (prompts, instructions, status, errors) goes to
+ *    STDERR so it's visible in interactive use.
+ *  - ONLY the refresh token itself (on success) goes to STDOUT, so a wrapper
+ *    script can capture it: `TOKEN=$(node bootstrap-refresh-token.mjs)`.
+ *  - Exit code 0 on success, non-zero on failure.
+ *
+ * Usage:
  *
  *   RELIAS_REDIRECT_URI="<from the console one-liner>" node scripts/bootstrap-refresh-token.mjs
  *
  * No dependencies — Node 22+ built-ins only. Nothing is written to disk; the
- * refresh token is printed to YOUR terminal for you to paste into the
- * RELIAS_OIDC_REFRESH_TOKEN secret (C8). Do not paste it into chat.
+ * refresh token is printed to STDOUT for shell capture, paste into the
+ * RELIAS_OIDC_REFRESH_TOKEN secret (C8), or both. Do not paste it into chat.
  */
 import crypto from 'node:crypto';
 import readline from 'node:readline/promises';
-import { stdin, stdout } from 'node:process';
+import { stdin, stderr } from 'node:process';
 
 const ISSUER = 'https://login.reliaslearning.com';
 const CLIENT_ID = 'rlms-website';
 const REDIRECT_URI = process.env.RELIAS_REDIRECT_URI;
-const SCOPE = process.env.RELIAS_SCOPE ?? 'openid profile offline_access search-api';
+// Default narrowed 2026-05-28 after discovery: Relias rejects the previous
+// `openid profile offline_access search-api` combo with invalid_grant on
+// auth-code exchange. `openid offline_access` succeeds. The `search-api`
+// scope wasn't a real Relias scope name; access to the search API is
+// granted implicitly via the issued bearer token. `profile` may also have
+// been the culprit; both removed for safety.
+const SCOPE = process.env.RELIAS_SCOPE ?? 'openid offline_access';
 
 if (!REDIRECT_URI) {
-  console.error(
+  stderr.write(
     'Set RELIAS_REDIRECT_URI first. Find it in the Relias browser console:\n' +
       "  Object.keys(localStorage).filter(k=>k.startsWith('oidc.'))" +
-      '.map(k=>{try{return JSON.parse(localStorage[k]).redirect_uri}catch{return null}}).filter(Boolean)',
+      '.map(k=>{try{return JSON.parse(localStorage[k]).redirect_uri}catch{return null}}).filter(Boolean)\n',
   );
   process.exit(1);
 }
@@ -53,17 +66,19 @@ authUrl.search = new URLSearchParams({
   code_challenge_method: 'S256',
 }).toString();
 
-console.log('\n1) Be logged into Relias in your browser.');
-console.log('2) Open DevTools → Network tab, check "Preserve log".');
-console.log('3) Paste this URL into that browser tab and hit enter:\n');
-console.log(authUrl.toString());
-console.log(
+stderr.write('\n1) Be logged into Relias in your browser.\n');
+stderr.write('2) Open DevTools → Network tab, check "Preserve log".\n');
+stderr.write('3) Paste this URL into that browser tab and hit enter:\n\n');
+stderr.write(authUrl.toString() + '\n');
+stderr.write(
   '\n4) You will be redirected to the callback. The SPA may show an error — ignore it.\n' +
     '   In the Network tab, click the request to your redirect_uri and copy the\n' +
-    '   "code" value from its query string (or grab it from the address bar fast).',
+    '   "code" value from its query string (or grab it from the address bar fast).\n',
 );
 
-const rl = readline.createInterface({ input: stdin, output: stdout });
+// readline must use stderr for output so prompts don't pollute stdout (where
+// only the token belongs). stdin stays as input.
+const rl = readline.createInterface({ input: stdin, output: stderr, terminal: true });
 const code = (await rl.question('\nPaste the authorization code: ')).trim();
 rl.close();
 
@@ -80,20 +95,39 @@ const res = await fetch(`${ISSUER}/connect/token`, {
 });
 
 const json = await res.json();
-console.log('\nToken response status:', res.status, '| keys:', Object.keys(json).join(', '));
+stderr.write(`\nToken response status: ${res.status} | keys: ${Object.keys(json).join(', ')}\n`);
 
-if (json.refresh_token) {
-  console.log(
-    '\n✅ refresh_token obtained. Paste the line below into the\n' +
-      '   RELIAS_OIDC_REFRESH_TOKEN secret (C8) — and nowhere else:\n',
+if (res.status !== 200) {
+  stderr.write(`\n❌ Token exchange failed:\n${JSON.stringify(json, null, 2)}\n`);
+  stderr.write(
+    '\nCommon causes:\n' +
+      '  - Authorization code expired (codes live ~5 min — paste quickly after redirect)\n' +
+      '  - Code already used (single-use; re-run bootstrap for a fresh code)\n' +
+      '  - PKCE verifier mismatch (only happens if you mix codes between bootstrap runs)\n' +
+      '  - Scope rejected by client config (try RELIAS_SCOPE="openid offline_access")\n' +
+      '  - Redirect URI mismatch (must match what the client is registered for)\n',
   );
-  console.log(json.refresh_token);
-} else {
-  console.log(
+  process.exit(2);
+}
+
+if (!json.refresh_token) {
+  stderr.write(
     '\n❌ No refresh_token in the response — offline_access was likely not granted to\n' +
       '   this client. Fallback: headless re-auth each cron run (stores username/password).\n',
   );
-  console.log(
-    JSON.stringify({ ...json, access_token: json.access_token ? '<present>' : undefined }, null, 2),
+  stderr.write(
+    JSON.stringify(
+      { ...json, access_token: json.access_token ? '<present>' : undefined },
+      null,
+      2,
+    ) + '\n',
   );
+  process.exit(3);
 }
+
+stderr.write(
+  '\n✅ refresh_token obtained. Captured on stdout for shell scripts; also visible below.\n' +
+    '   Use it in RELIAS_OIDC_REFRESH_TOKEN. Do not paste into chat.\n\n',
+);
+// ONLY the token goes to stdout — wrapper scripts capture via $()
+process.stdout.write(json.refresh_token + '\n');
