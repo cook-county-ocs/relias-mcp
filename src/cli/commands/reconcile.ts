@@ -4,7 +4,7 @@ import { parserForExtension } from '../../lib/file-parsers/index.js';
 import { reconcile } from '../../lib/reconciliation/index.js';
 import type { ReconciliationResult } from '../../lib/reconciliation/index.js';
 import type { CliContext } from '../context.js';
-import { renderMarkdown } from '../render/markdown.js';
+import { renderReconciliationMarkdown } from '../../lib/render/reconciliation-markdown.js';
 
 /**
  * `relias-mcp reconcile <file>` — parse a coordinator-supplied catalog
@@ -64,7 +64,7 @@ export async function runReconcile(
   logger.info({ summary: result.summary }, 'reconcile: complete');
 
   return {
-    markdown: renderMarkdown(result),
+    markdown: renderReconciliationMarkdown(result),
     result,
   };
 }
