@@ -3,7 +3,7 @@ import type {
   BothMatch,
   DriftEntry,
   ReconciliationResult,
-} from '../../lib/reconciliation/index.js';
+} from '../reconciliation/index.js';
 
 /**
  * Render a {@link ReconciliationResult} as a markdown report — same
@@ -24,7 +24,7 @@ import type {
  * with "(none)") to keep the report short for the common case of
  * mostly-clean reconciliations.
  */
-export function renderMarkdown(result: ReconciliationResult): string {
+export function renderReconciliationMarkdown(result: ReconciliationResult): string {
   const out: string[] = [];
 
   out.push('# Relias Catalog Reconciliation Report\n');
