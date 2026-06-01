@@ -52,7 +52,23 @@ This binds the ecosystem authorization protocol to relias-mcp's gates:
   line. Rebase-and-merge only — no squash, no merge commits.
 - `docs/` subdirectories are **plural** (`specs/`, `plans/`, `guides/`, `examples/`) per the
   ecosystem rule locked 2026-05-25. The v1.0 spec's §9 drew them singular — that's a known
-  defect; the plural names here are correct.
+  defect; the plural names here are correct. The full plural set is now scaffolded:
+  `specs/`, `plans/`, `handoffs/`, `examples/`, `guides/`, `learnings/`, `chores/`.
+
+## Milestones, Risks, and Learning Budget (ecosystem constructs)
+
+This citizen participates in three ecosystem-level constructs defined in
+`OCS-Ecosystem/docs/conventions.md` (§1, §2, §8.2–8.3):
+
+- **Milestones (`M<N>`)** group this citizen's features and chores toward dated targets.
+  The register is `OCS-Ecosystem/docs/milestones/milestones.md` (relias-mcp v1.1 is **M1**).
+  A milestone ID **never** appears in this citizen's commit messages, branch names, or PR
+  titles (LD-10) — those carry `F`/`C`/`T` only.
+- **Risks (`R<N>`)** affecting this citizen are tracked in
+  `OCS-Ecosystem/docs/risk-register.md` (relias-mcp carries **R1** and **R2**). Mitigation
+  ships here as an `F`/`C`; the risk links to it.
+- **Learning-budget mode (5% / 50%)** is declared in each spec's header and inherited by its
+  milestone (M1 is 5% / ship). Full-PR-review-before-merge is the floor in every mode.
 
 ## 🎓 Exercises (authorship currently suspended)
 
