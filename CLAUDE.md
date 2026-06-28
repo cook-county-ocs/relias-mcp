@@ -54,6 +54,7 @@ This binds the ecosystem authorization protocol to relias-mcp's gates:
   ecosystem rule locked 2026-05-25. The v1.0 spec's §9 drew them singular — that's a known
   defect; the plural names here are correct. The full plural set is now scaffolded:
   `specs/`, `plans/`, `handoffs/`, `examples/`, `guides/`, `learnings/`, `chores/`.
+- **Gate routing & the deep-spec flag** follow the ecosystem conventions doc (<https://github.com/martin-gleason/OCS-Ecosystem/blob/main/docs/conventions.md>, "Gate routing & the deep-spec flag"). In planning, when a gate needs a chat-authored deep spec before build, the plan summary MUST flag it (`Deep spec required: <gate> — <decisions>`). Spec authority stays in chat.
 
 ## Milestones, Risks, and Learning Budget (ecosystem constructs)
 
